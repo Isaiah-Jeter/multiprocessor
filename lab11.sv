@@ -34,22 +34,20 @@ module RISCVmulti(input  logic        clk, reset,
                    output logic        MemWrite,
                    output logic [31:0] ALUResult, WriteData,
                    input  logic [31:0] ReadData
-						 output logic [1:0] alusrca, alusrcb,
-						 output logic adrsrc, irwrite, pcwrite);
+				   output logic [1:0] alusrca, alusrcb,
+				   output logic adrsrc, irwrite, pcwrite);
 
   logic       ALUSrc, RegWrite, Jump, Zero;
   logic [1:0] ResultSrc, ImmSrc;
   logic [2:0] ALUControl;
+  logic [31:0] adr;
 
   controller c(clk, reset, Instr[6:0], Instr[14:12], Instr[30], Zero, ImmSrc, alusrca, alusrcb, ResultSrc, adrsrc, ALUControl, irwrite, pcwrite, RegWrite, MemWrite);
 
-  datapath dp(clk, reset, ResultSrc, RegWrite, ImmSrc, alusrca, alusrcb, ALUControl, Zero, Instr, WriteData, adr
-              ALUSrc, RegWrite,
-              ImmSrc, ALUControl,
-              Zero, PC, Instr,
-              ALUResult, WriteData, ReadData);
+  datapath dp(clk, reset, ResultSrc, RegWrite, ImmSrc, alusrca, alusrcb, ALUControl, Zero, Instr, WriteData, adr, ReadData, , pcwrite, irwrite);
 				  
   mem(clk, MemWrite, ALUResult, WriteData, ReadData);
+  
 endmodule
 
 module datapath(input  logic        clk, reset,
@@ -58,11 +56,11 @@ module datapath(input  logic        clk, reset,
                 input  logic [1:0]  ImmSrc, ALUSrcB, ALUSrcA,
                 input  logic [2:0]  ALUControl,
                 output logic        Zero,
-					 output  logic [31:0] Instr,
+				output  logic [31:0] Instr,
                 output logic [31:0] WriteData,
-					 output logic  [31:0] Adr,
+				output logic  [31:0] Adr,
                 input  logic [31:0] ReadData,
-					 input logic PCWrite, IRWrite);
+				input logic PCWrite, IRWrite);
 
   logic [31:0] PCNext, A, tempA, tempWriteData;
   logic [31:0] ImmExt, OldPC, Data, ALUResult, ALUOut, PC;
